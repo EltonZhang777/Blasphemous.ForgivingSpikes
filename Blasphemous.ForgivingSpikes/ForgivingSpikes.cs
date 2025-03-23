@@ -14,6 +14,13 @@ internal class ForgivingSpikes : BlasMod
         config = ConfigHandler.Load<Config>();
     }
 
+    protected override void OnAllInitialized()
+    {
+#if DEBUG
+        SpikeUtilities.SetSpikePenalty(SpikeUtilities.SpikePenaltyType.PercentageDamage, 0.4f);
+#endif
+    }
+
     protected override void OnDispose()
     {
         ConfigHandler.Save(config);

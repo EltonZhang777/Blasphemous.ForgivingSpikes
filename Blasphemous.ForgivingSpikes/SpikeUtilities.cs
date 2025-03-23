@@ -1,4 +1,6 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ForgivingSpikes.Components;
+using Framework.Managers;
+using Gameplay.GameControllers.Entities;
 using UnityEngine;
 
 namespace Blasphemous.ForgivingSpikes;
@@ -9,55 +11,102 @@ namespace Blasphemous.ForgivingSpikes;
 public static class SpikeUtilities
 {
     /// <summary>
-    /// Current spike penalty type
+    /// Currently active config for spike penalty
     /// </summary>
-    public static SpikePenaltyType CurrentPenaltyType { get; internal set; }
+    public static SpikePenaltyConfig CurrentConfig { get; internal set; }
 
     /// <summary>
-    /// Damage amount of the spike. 
-    /// If <see cref="CurrentPenaltyType"/> is <see cref="SpikePenaltyType.PercentageDamage"/>, it is a ratio to TPO's max health in range [0, 1]
+    /// Stored global config for spike penalty. Current config defaults to this value if no other temporary config exist.
     /// </summary>
-    public static float SpikeDamageAmount { get; internal set; }
+    public static SpikePenaltyConfig GlobalConfig { get; internal set; }
 
+    /// <summary>
+    /// Whether global config is currently used. 
+    /// </summary>
+    public static bool IsUsingGlobalConfig { get; internal set; }
+
+    internal static float spikeInstakillDamage = (float)1e7;
+
+    public static Hit SpikeHit
+    {
+        get
+        {
+            Hit result = new()
+            {
+                AttackingEntity = Core.Logic.Penitent.gameObject,
+                DamageAmount = CalculateDamageAmount(),
+                DamageElement = CurrentConfig.spikeDamageElement,
+                DamageType = CurrentConfig.spikeDamageType,
+                Unblockable = true,
+                Unparriable = true,
+                Unnavoidable = true
+            };
+            return result;
+        }
+    }
     internal static float TpoMaxHealth => Core.Logic.Penitent.Stats.Life.CurrentMax;
 
     /// <summary>
-    /// Penalty when TPO touches spikes
+    /// Set current spike penalty config. If you want to change and apply global config, use <see cref="SetGlobalConfig(SpikePenaltyConfig)"/> and then <see cref="UseGlobalConfig"/> instead.
     /// </summary>
-    public enum SpikePenaltyType
+    public static void SetCurrentConfig(SpikePenaltyConfig config)
     {
-        /// <summary>
-        /// Same as vanilla, instakilling TPO
-        /// </summary>
-        Instakill,
-
-        /// <summary>
-        /// Deal a fixed amount of damage
-        /// </summary>
-        FixedDamage,
-
-        /// <summary>
-        /// Deal a percentage of TPO's max health of damage
-        /// </summary>
-        PercentageDamage
-    }
-
-    static SpikeUtilities()
-    {
-        CurrentPenaltyType = SpikePenaltyType.Instakill;
+        CurrentConfig = config;
+        if (CurrentConfig != GlobalConfig)
+        {
+            IsUsingGlobalConfig = false;
+        }
     }
 
     /// <summary>
-    /// Set spike penalty type and damage
+    /// Set the global spike penalty config. Automatically updates to current config if system is using global config currently.
     /// </summary>
-    public static void SetSpikePenalty(SpikePenaltyType penaltyType, float damage)
+    public static void SetGlobalConfig(SpikePenaltyConfig config)
     {
-        CurrentPenaltyType = penaltyType;
-        if (penaltyType == SpikePenaltyType.PercentageDamage)
+        GlobalConfig = config;
+        if (IsUsingGlobalConfig)
         {
-            // ratio to TPO's max HP must be in range [0, 1]
-            damage = Mathf.Clamp01(damage);
+            UseGlobalConfig();
         }
-        SpikeDamageAmount = damage;
+    }
+
+    /// <summary>
+    /// Set current spike penalty config to global spike penalty config (i.e. abandon all temporary current config)
+    /// </summary>
+    public static void UseGlobalConfig()
+    {
+        CurrentConfig = GlobalConfig;
+        IsUsingGlobalConfig = true;
+    }
+
+    /// <summary>
+    /// Deal an instance of spike damage to TPO
+    /// </summary>
+    public static void DealSpikeDamageToPenitent()
+    {
+        if (CurrentConfig.spikeDamageIgnoreDefense)
+        {
+            // directly set health of TPO to ignore defense
+            Core.Logic.Penitent.Stats.Life.Current = Mathf.Clamp(Core.Logic.Penitent.Stats.Life.Current - CalculateDamageAmount(), 0, float.MaxValue);
+        }
+        else
+        {
+            // deal a normal hit
+            Core.Logic.Penitent.Damage(SpikeHit);
+        }
+    }
+
+    private static float CalculateDamageAmount()
+    {
+        float result;
+        result = CurrentConfig.spikePenaltyType switch
+        {
+            SpikePenaltyConfig.SpikePenaltyType.Instakill => spikeInstakillDamage,
+            SpikePenaltyConfig.SpikePenaltyType.FixedDamage => CurrentConfig.spikeDamageAmount,
+            SpikePenaltyConfig.SpikePenaltyType.PercentageDamage => CurrentConfig.spikeDamageAmount * TpoMaxHealth,
+            _ => spikeInstakillDamage
+        };
+        return result;
     }
 }
+
