@@ -2,13 +2,10 @@
 using Blasphemous.ForgivingSpikes.Patches;
 using Blasphemous.ModdingAPI;
 using DG.Tweening;
-using Epic.OnlineServices;
-using Framework.FrameworkCore;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent;
 using HarmonyLib;
-using HutongGames.PlayMaker.Actions;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,10 +160,10 @@ public static class SpikeUtilities
 #if DEBUG
         ModLog.Warn($"Current position: {tpo.GetPosition()}; \nSafe position: {Core.LevelManager.LastSafePosition}");
 #endif
-        
+
         // if safe position is in spikes, revert safe position to a moment ago until it is away from spikes
         List<Vector3> safePositions = PatchController.safePositionQueue.ToList();
-        for (int i = PatchController.safePositionQueue.Count - 1; i >= 0; i--) 
+        for (int i = PatchController.safePositionQueue.Count - 1; i >= 0; i--)
         {
 #if DEBUG
             ModLog.Warn($"Safe Position too close in spikes! Reverting safe position to a moment ago");
@@ -200,7 +197,7 @@ public static class SpikeUtilities
         tweener = TpoSprite.DOFade(1, Time.deltaTime);  // set Penitent visible
         yield return tweener.WaitForCompletion();
 
-        // spawning Cherub Respawn VFX, not implemented yet
+        // spawning Cherub Respawn VFX, not yet implemented
         /*
         object[] parameters = { storedSafePosition, EntityOrientation.Left, false };
         Traverse.Create(Core.SpawnManager).Method("CreatePlayer", parameters).GetValue(parameters);

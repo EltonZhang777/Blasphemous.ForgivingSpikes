@@ -1,13 +1,11 @@
-﻿using Framework.Managers;
-using Gameplay.GameControllers.Entities;
-using HarmonyLib;
-using Blasphemous.ForgivingSpikes.Components;
-using Gameplay.UI;
-using Blasphemous.ModdingAPI;
-using UnityEngine;
+﻿using Blasphemous.ModdingAPI;
 using Framework.FrameworkCore;
+using Framework.Managers;
+using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent;
 using Gameplay.GameControllers.Penitent.Spawn;
+using HarmonyLib;
+using UnityEngine;
 
 namespace Blasphemous.ForgivingSpikes.Patches;
 
@@ -62,8 +60,8 @@ class EventManager_Patch
 class SpawnManager_CreatePlayer_ShowDebugInformation_Patch
 {
     public static void Prefix(
-        Vector3 position, 
-        EntityOrientation orientation, 
+        Vector3 position,
+        EntityOrientation orientation,
         bool createNewInstance)
     {
         ModLog.Warn($"Invoked Core.SpawnManager.CreatePlayer({position}, {orientation}, {createNewInstance}) !");

@@ -1,13 +1,8 @@
-﻿using Epic.OnlineServices;
-using Gameplay.GameControllers.Entities;
+﻿using Gameplay.GameControllers.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
-using static Blasphemous.ForgivingSpikes.SpikeUtilities;
 
 namespace Blasphemous.ForgivingSpikes.Components;
 
@@ -87,10 +82,10 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     /// Constructor of <see cref="SpikePenaltyConfig"/>
     /// </summary>
     public SpikePenaltyConfig(
-        SpikePenaltyType spikePenaltyType, 
-        float spikeDamageAmount, 
-        bool spikeDamageIgnoreDefense = true, 
-        DamageArea.DamageElement spikeDamageElement = DamageArea.DamageElement.Normal, 
+        SpikePenaltyType spikePenaltyType,
+        float spikeDamageAmount,
+        bool spikeDamageIgnoreDefense = true,
+        DamageArea.DamageElement spikeDamageElement = DamageArea.DamageElement.Normal,
         DamageArea.DamageType spikeDamageType = DamageArea.DamageType.Heavy)
     {
         this.spikePenaltyType = spikePenaltyType;

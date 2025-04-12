@@ -1,6 +1,5 @@
 ﻿using Blasphemous.CheatConsole;
 using Blasphemous.ForgivingSpikes.Commands;
-using Blasphemous.ForgivingSpikes.Components;
 using Blasphemous.ForgivingSpikes.Patches;
 using Blasphemous.ModdingAPI;
 using Blasphemous.ModdingAPI.Helpers;

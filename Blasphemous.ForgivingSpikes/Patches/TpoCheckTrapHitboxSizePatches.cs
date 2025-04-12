@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Blasphemous.ModdingAPI;
-using Gameplay.GameControllers.Penitent.Damage;
+﻿using Gameplay.GameControllers.Penitent.Damage;
 using HarmonyLib;
-using UnityEngine;
 
 namespace Blasphemous.ForgivingSpikes.Patches;
 

@@ -1,5 +1,4 @@
 ﻿using Blasphemous.ForgivingSpikes.Components;
-using Blasphemous.ModdingAPI;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent.Damage;
@@ -8,7 +7,6 @@ using HarmonyLib;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
 
 namespace Blasphemous.ForgivingSpikes.Patches;
@@ -24,6 +22,9 @@ internal static class PatchController
     internal static float storeSafePositionInterval;
     internal static bool isStoringSafePosition = false;
 
+    /// <summary>
+    /// Not yet implemented
+    /// </summary>
     internal static void SetModTrapCheckerActive(bool active)
     {
         if (active)
