@@ -1,1 +1,0 @@
-﻿namespace Blasphemous.ForgivingSpikes.Patches;
