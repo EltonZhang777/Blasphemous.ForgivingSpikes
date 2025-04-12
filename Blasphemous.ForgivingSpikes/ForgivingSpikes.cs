@@ -18,10 +18,12 @@ internal class ForgivingSpikes : BlasMod
     protected override void OnInitialize()
     {
         //LocalizationHandler.RegisterDefaultLanguage("en");
-        config = ConfigHandler.Load<Config>();
 
-        // initialize spike penalty config to vanilla instakill
-        SpikeUtilities.SetGlobalConfig(SpikePenaltyConfig.Instakill);
+        // initialize spike penalty config to values in `.cfg` before other mods specify penalty config
+        config = ConfigHandler.Load<Config>();
+        SpikeUtilities.SetGlobalConfig(config.globalSpikePenaltyConfig);
+        ConfigHandler.Save(config);
+
         SpikeUtilities.UseGlobalConfig();
     }
 
@@ -31,14 +33,7 @@ internal class ForgivingSpikes : BlasMod
     }
 
     protected override void OnAllInitialized()
-    {
-#if DEBUG
-        SpikeUtilities.SetGlobalConfig(new SpikePenaltyConfig(
-            SpikePenaltyConfig.SpikePenaltyType.PercentageDamage,
-            0.4f));
-        SpikeUtilities.UseGlobalConfig();
-#endif
-    }
+    { }
 
     protected override void OnLevelLoaded(string oldLevel, string newLevel)
     {

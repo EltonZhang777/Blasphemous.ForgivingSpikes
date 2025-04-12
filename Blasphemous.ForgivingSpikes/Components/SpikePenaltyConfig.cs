@@ -1,5 +1,7 @@
 ﻿using Epic.OnlineServices;
 using Gameplay.GameControllers.Entities;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,7 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     /// <summary>
     /// Current spike penalty type
     /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public SpikePenaltyType spikePenaltyType;
 
     /// <summary>
@@ -33,11 +36,13 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     /// <summary>
     /// Damage element of spike's damage
     /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public DamageArea.DamageElement spikeDamageElement = DamageArea.DamageElement.Normal;
 
     /// <summary>
     /// Damage element of spike's damage
     /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public DamageArea.DamageType spikeDamageType = DamageArea.DamageType.Heavy;
 
     /// <summary>
