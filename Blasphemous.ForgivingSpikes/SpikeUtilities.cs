@@ -1,6 +1,5 @@
 ﻿using Blasphemous.ForgivingSpikes.Components;
 using Blasphemous.ForgivingSpikes.Patches;
-using Blasphemous.ModdingAPI;
 using DG.Tweening;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
@@ -82,7 +81,7 @@ public static class SpikeUtilities
     /// </summary>
     public static void UseGlobalConfig()
     {
-        ModLog.Warn($"Using global config for spikes!");
+        Main.LogIfDebug($"Using global config for spikes!");
         CurrentConfig = GlobalConfig;
         IsUsingGlobalConfig = true;
     }
@@ -130,6 +129,9 @@ public static class SpikeUtilities
         return CalculateDamageAmount(CurrentConfig);
     }
 
+    /// <summary>
+    /// Create a Hit instance of spike damage with the specified configuration.
+    /// </summary>
     public static Hit GetSpikeHit(SpikePenaltyConfig config)
     {
         Hit result = new()
@@ -145,38 +147,38 @@ public static class SpikeUtilities
         return result;
     }
 
+    /// <summary>
+    /// Create a Hit instance of spike damage with the current configuration.
+    /// </summary>
     public static Hit GetSpikeHit()
     {
         return GetSpikeHit(CurrentConfig);
     }
 
-    public static IEnumerator TpoRespawnCoroutine()
+    internal static IEnumerator TpoRespawnCoroutine()
     {
         Penitent tpo = Core.Logic.Penitent;
         // store safe position to prevent it being updated on spikes
         Vector3 storedSafePosition = Core.LevelManager.LastSafePosition;
         Vector3 tpoCurrentPosition = tpo.GetPosition();
         tpo.Teleport(tpoCurrentPosition);  // stop Penitent from moving
-#if DEBUG
-        ModLog.Warn($"Current position: {tpo.GetPosition()}; \nSafe position: {Core.LevelManager.LastSafePosition}");
-#endif
+
+        Main.LogIfDebug($"Current position: {tpo.GetPosition()}; \nSafe position: {Core.LevelManager.LastSafePosition}");
 
         // if safe position is in spikes, revert safe position to a moment ago until it is away from spikes
         List<Vector3> safePositions = PatchController.safePositionQueue.ToList();
         for (int i = PatchController.safePositionQueue.Count - 1; i >= 0; i--)
         {
-#if DEBUG
-            ModLog.Warn($"Safe Position too close in spikes! Reverting safe position to a moment ago");
-#endif
+            Main.LogIfDebug($"Safe Position too close in spikes! Reverting safe position to a moment ago");
+
             if ((tpoCurrentPosition - safePositions[i]).magnitude > 0.2f)
             {
                 storedSafePosition = safePositions[i];
                 break;
             }
         }
-#if DEBUG
-        ModLog.Warn($"Safe position after safety fallback: {storedSafePosition}");
-#endif
+
+        Main.LogIfDebug($"Safe position after safety fallback: {storedSafePosition}");
 
         // disable player input
         Core.Input.SetBlocker(inputBlockerName, true);

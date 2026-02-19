@@ -55,7 +55,7 @@ internal static class PatchController
         offset = collider.offset;
     }
 
-    internal static bool Prefix_DoModSpikeDamage()
+    internal static bool InflictModSpikeDamage()
     {
         // if instakill, execute vanilla code
         if (SpikeUtilities.CurrentConfig.spikePenaltyType == SpikePenaltyConfig.SpikePenaltyType.Instakill)
@@ -65,6 +65,7 @@ internal static class PatchController
         SpikeUtilities.DealSpikeDamageToPenitent();
         if (Core.Logic.Penitent.Stats.Life.Current <= 0)
         {
+            // if penitent would die, execute vanilla code to instakill
             PatchController.diedToSpikeDamage = true;
             return true;
         }
@@ -74,7 +75,7 @@ internal static class PatchController
         return false;
     }
 
-    internal static void Postfix_SyncCheckTrapHitboxSize()
+    internal static void SyncCheckTrapHitboxSize()
     {
         PatchController.GetTpoDamageAreaColliderSizeAndOffset(out Vector2 size, out Vector2 offset);
         BoxCollider2D collider = PatchController.TpoCheckTrapParent.GetComponent<BoxCollider2D>();

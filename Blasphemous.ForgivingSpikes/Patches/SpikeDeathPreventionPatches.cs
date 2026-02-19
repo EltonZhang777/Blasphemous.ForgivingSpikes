@@ -1,5 +1,4 @@
-﻿using Blasphemous.ModdingAPI;
-using Framework.FrameworkCore;
+﻿using Framework.FrameworkCore;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent;
@@ -10,37 +9,34 @@ using UnityEngine;
 namespace Blasphemous.ForgivingSpikes.Patches;
 
 /// <summary>
-/// Deal mod spike damage when getting into spikes
+/// Deal mod spike damage when getting into spikes and when falling into abyss without linen
 /// </summary>
-[HarmonyPatch(typeof(CheckTrap), "SpikeTrapDamage")]
-class CheckTrap_SpikeTrapDamage_DoModSpikeDamage_Patch
+[HarmonyPatch(typeof(CheckTrap))]
+class CheckTrap_DoModSpikeDamage_Patch
 {
+    [HarmonyPatch("SpikeTrapDamage")]
     [HarmonyPrefix]
-    public static bool Prefix()
+    public static bool PatchSpikeDamage()
     {
-        return PatchController.Prefix_DoModSpikeDamage();
+        return PatchController.InflictModSpikeDamage();
     }
-}
 
-/// <summary>
-/// Deal mod spike damage when falling into abyss without linen
-/// </summary>
-[HarmonyPatch(typeof(CheckTrap), "AbyssTrapDamage")]
-class CheckTrap_AbyssTrapDamage_DoModSpikeDamage_Patch
-{
+    [HarmonyPatch("AbyssTrapDamage")]
     [HarmonyPrefix]
-    public static bool Prefix()
+    public static bool PatchAbyssDamage()
     {
-        return PatchController.Prefix_DoModSpikeDamage();
+        return PatchController.InflictModSpikeDamage();
     }
 }
 
 /// <summary>
 /// Prevent launching penitent death event when TPO wouldn't be dead to spike/abyss damage
 /// </summary>
-[HarmonyPatch(typeof(EventManager), nameof(EventManager.LaunchEvent))]
-class EventManager_Patch
+[HarmonyPatch(typeof(EventManager))]
+class EventManager_PreventPenitentDeath_Patch
 {
+    [HarmonyPatch("LaunchEvent")]
+    [HarmonyPrefix]
     public static bool Prefix(
         string id,
         string parameter)
@@ -56,48 +52,55 @@ class EventManager_Patch
 }
 
 #if DEBUG
-[HarmonyPatch(typeof(SpawnManager), "CreatePlayer")]
-class SpawnManager_CreatePlayer_ShowDebugInformation_Patch
+[HarmonyPatch(typeof(SpawnManager))]
+class SpawnManager_ShowDebugInfo_Patch
 {
+    [HarmonyPatch("CreatePlayer")]
+    [HarmonyPrefix]
     public static void Prefix(
         Vector3 position,
         EntityOrientation orientation,
         bool createNewInstance)
     {
-        ModLog.Warn($"Invoked Core.SpawnManager.CreatePlayer({position}, {orientation}, {createNewInstance}) !");
+        Main.LogIfDebug($"Invoked Core.SpawnManager.CreatePlayer({position}, {orientation}, {createNewInstance}) !");
     }
 
+    [HarmonyPatch("CreatePlayer")]
+    [HarmonyPostfix]
     public static void Postfix()
     {
-        ModLog.Warn($"Core.SpawnManager.CreatePlayer() executed successfully!");
+        Main.LogIfDebug($"Core.SpawnManager.CreatePlayer() executed successfully!");
     }
 }
 
-[HarmonyPatch(typeof(Penitent), "CherubRespawn")]
-class Penitent_CherubRespawn_ShowDebugInformation_Patch
+[HarmonyPatch(typeof(Penitent))]
+class Penitent_ShowDebugInfo_Patch
 {
+    [HarmonyPatch("CherubRespawn")]
+    [HarmonyPrefix]
     public static void Prefix(
         GameObject ___Cherubs)
     {
-        ModLog.Warn($"Cherubs is null?: {___Cherubs == null}");
+        Main.LogIfDebug($"Cherubs is null?: {___Cherubs == null}");
     }
 }
 
-[HarmonyPatch(typeof(CherubRespawn), "Start")]
-class CherubRespawn_Start_ShowDebugInfo_Patch
+[HarmonyPatch(typeof(CherubRespawn))]
+class CherubRespawn_ShowDebugInfo_Patch
 {
-    public static void Prefix()
+    [HarmonyPatch("Start")]
+    [HarmonyPrefix]
+    public static void StartPrefix()
     {
-        ModLog.Warn($"Started CherubRespawn!");
+        Main.LogIfDebug($"Started CherubRespawn!");
+    }
+
+    [HarmonyPatch("Awake")]
+    [HarmonyPrefix]
+    public static void AwakePrefix()
+    {
+        Main.LogIfDebug($"CherubRespawn awoken!");
     }
 }
 
-[HarmonyPatch(typeof(CherubRespawn), "Awake")]
-class CherubRespawn_Awake_ShowDebugInfo_Patch
-{
-    public static void Prefix()
-    {
-        ModLog.Warn($"CherubRespawn awoken!");
-    }
-}
 #endif

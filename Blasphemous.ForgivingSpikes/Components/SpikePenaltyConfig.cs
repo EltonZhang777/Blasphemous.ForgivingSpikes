@@ -101,21 +101,25 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
         }
     }
 
+    /// <inheritdoc/>
     public static bool operator ==(SpikePenaltyConfig a, SpikePenaltyConfig b)
     {
         return a.Equals(b);
     }
 
+    /// <inheritdoc/>
     public static bool operator !=(SpikePenaltyConfig a, SpikePenaltyConfig b)
     {
         return !(a == b);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object obj)
     {
         return obj is SpikePenaltyConfig config && Equals(config);
     }
 
+    /// <inheritdoc/>
     public bool Equals(SpikePenaltyConfig other)
     {
         return spikePenaltyType == other.spikePenaltyType &&
@@ -125,6 +129,7 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
                spikeDamageType == other.spikeDamageType;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
         int hashCode = 486688808;
