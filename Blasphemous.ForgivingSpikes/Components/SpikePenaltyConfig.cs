@@ -45,7 +45,7 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     /// </summary>
     public static SpikePenaltyConfig Instakill => new SpikePenaltyConfig(
         SpikePenaltyType.Instakill,
-        (float)1e7);
+        SpikeUtilities.spikeInstakillDamage);
 
     /// <summary>
     /// Quick default config for spikes to not deal damage to TPO.

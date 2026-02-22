@@ -32,8 +32,8 @@ public static class SpikeUtilities
     /// </summary>
     public static float delayBeforeRespawn = 0.5f;
 
-    internal static float spikeInstakillDamage = (float)1e7;
-    internal static string inputBlockerName = "MOD_SPIKE_RESPAWNING";
+    internal static readonly float spikeInstakillDamage = (float)1e7;
+    internal static readonly string inputBlockerName = "MOD_SPIKE_RESPAWNING";
 
     /// <summary>
     /// Currently active config for spike penalty
@@ -46,7 +46,7 @@ public static class SpikeUtilities
     public static SpikePenaltyConfig GlobalConfig { get; internal set; }
 
     /// <summary>
-    /// Whether global config is currently used. 
+    /// Whether global config is currently being used. 
     /// </summary>
     public static bool IsUsingGlobalConfig { get; internal set; }
 

@@ -12,6 +12,8 @@ internal class ForgivingSpikes : BlasMod
 {
     internal Config config;
 
+    private Coroutine _storeSafePositionCoroutine;
+
     internal ForgivingSpikes() : base(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_AUTHOR, ModInfo.MOD_VERSION) { }
 
     protected override void OnInitialize()
@@ -39,19 +41,27 @@ internal class ForgivingSpikes : BlasMod
         // if TPO changed level, it must be out of spikes and alive.
         PatchController.diedToSpikeDamage = false;
 
-        Coroutine storeSafePositionCoroutine = null;
         if (SceneHelper.GameSceneLoaded)
         {
             if (!PatchController.isStoringSafePosition)
             {
                 PatchController.isStoringSafePosition = true;
-                storeSafePositionCoroutine = UIController.instance.StartCoroutine(PatchController.StoreLastSafePosition(PatchController.storeSafePositionInterval));
+                _storeSafePositionCoroutine = UIController.instance.StartCoroutine(
+                    PatchController.StoreLastSafePosition(PatchController.storeSafePositionInterval));
             }
         }
-        else if (SceneHelper.MenuSceneLoaded)
+
+        if (SceneHelper.MenuSceneLoaded)
         {
             PatchController.isStoringSafePosition = false;
-            UIController.instance.StopCoroutine(storeSafePositionCoroutine);
+            if (_storeSafePositionCoroutine != null)
+            {
+                try
+                {
+                    UIController.instance.StopCoroutine(_storeSafePositionCoroutine);
+                }
+                catch { }
+            }
         }
     }
 

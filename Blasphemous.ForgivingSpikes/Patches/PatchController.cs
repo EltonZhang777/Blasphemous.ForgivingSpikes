@@ -19,7 +19,7 @@ internal static class PatchController
     internal static GameObject TpoCheckTrapParent => Core.Logic.Penitent.transform.Find("#Constitution/Feet").gameObject;
     internal static bool diedToSpikeDamage = false;
     internal static Queue<Vector3> safePositionQueue = new();
-    internal static float storeSafePositionInterval;
+    internal static float storeSafePositionInterval = 1f;
     internal static bool isStoringSafePosition = false;
 
     /// <summary>
@@ -81,6 +81,7 @@ internal static class PatchController
         BoxCollider2D collider = PatchController.TpoCheckTrapParent.GetComponent<BoxCollider2D>();
         collider.size = new Vector2(size.x, size.y * 1.0f);
         collider.offset = offset;
+        Main.LogIfDebug($"new CheckTrap hitbox size: {size}, offset: {offset}");
     }
 
     /// <summary>

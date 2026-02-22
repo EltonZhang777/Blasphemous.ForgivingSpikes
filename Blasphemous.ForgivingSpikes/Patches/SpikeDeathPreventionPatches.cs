@@ -51,7 +51,6 @@ class EventManager_PreventPenitentDeath_Patch
     }
 }
 
-#if DEBUG
 [HarmonyPatch(typeof(SpawnManager))]
 class SpawnManager_ShowDebugInfo_Patch
 {
@@ -102,5 +101,3 @@ class CherubRespawn_ShowDebugInfo_Patch
         Main.LogIfDebug($"CherubRespawn awoken!");
     }
 }
-
-#endif
