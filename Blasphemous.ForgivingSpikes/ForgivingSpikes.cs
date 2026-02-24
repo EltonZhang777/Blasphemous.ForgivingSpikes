@@ -43,12 +43,16 @@ internal class ForgivingSpikes : BlasMod
 
         if (SceneHelper.GameSceneLoaded)
         {
+            // Start the coroutine that continuously stores safe position
             if (!PatchController.isStoringSafePosition)
             {
                 PatchController.isStoringSafePosition = true;
                 _storeSafePositionCoroutine = UIController.instance.StartCoroutine(
                     PatchController.StoreLastSafePosition(PatchController.storeSafePositionInterval));
             }
+
+            // sync TPO's CheckTrap hitbox size (because it resets when loading a new scene)
+            PatchController.SyncCheckTrapHitboxSize();
         }
 
         if (SceneHelper.MenuSceneLoaded)
