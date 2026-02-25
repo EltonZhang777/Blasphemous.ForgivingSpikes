@@ -13,5 +13,6 @@ public class Config
     /// </summary>
     public SpikePenaltyConfig globalSpikePenaltyConfig = SpikePenaltyConfig.Instakill;
 
+    /// <inheritdoc/>
     public const string NOTE_MESSAGE = $"Modifying penalty in config takes the least priority than modifications made by other mods. (i.e. if any other mod sets spike penalty, config is useless)";
 }

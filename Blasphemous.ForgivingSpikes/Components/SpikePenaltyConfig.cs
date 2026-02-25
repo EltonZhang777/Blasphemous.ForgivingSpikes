@@ -43,14 +43,14 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     /// <summary>
     /// Quick default config for spikes to instakill TPO as vanilla does.
     /// </summary>
-    public static SpikePenaltyConfig Instakill => new SpikePenaltyConfig(
+    public static SpikePenaltyConfig Instakill => new(
         SpikePenaltyType.Instakill,
         SpikeUtilities.spikeInstakillDamage);
 
     /// <summary>
     /// Quick default config for spikes to not deal damage to TPO.
     /// </summary>
-    public static SpikePenaltyConfig NoDamage => new SpikePenaltyConfig(
+    public static SpikePenaltyConfig NoDamage => new(
         SpikePenaltyType.FixedDamage,
         0f,
         false,
@@ -133,11 +133,11 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     public override int GetHashCode()
     {
         int hashCode = 486688808;
-        hashCode = hashCode * -1521134295 + spikePenaltyType.GetHashCode();
-        hashCode = hashCode * -1521134295 + spikeDamageAmount.GetHashCode();
-        hashCode = hashCode * -1521134295 + spikeDamageIgnoreDefense.GetHashCode();
-        hashCode = hashCode * -1521134295 + spikeDamageElement.GetHashCode();
-        hashCode = hashCode * -1521134295 + spikeDamageType.GetHashCode();
+        hashCode = (hashCode * -1521134295) + spikePenaltyType.GetHashCode();
+        hashCode = (hashCode * -1521134295) + spikeDamageAmount.GetHashCode();
+        hashCode = (hashCode * -1521134295) + spikeDamageIgnoreDefense.GetHashCode();
+        hashCode = (hashCode * -1521134295) + spikeDamageElement.GetHashCode();
+        hashCode = (hashCode * -1521134295) + spikeDamageType.GetHashCode();
         return hashCode;
     }
 }

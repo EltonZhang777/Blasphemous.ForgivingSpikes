@@ -20,14 +20,14 @@ internal class TraverseUtils
         if (traverse == null)
         {
             ModLog.Error($"Failed to get null value from null traverse instance! Returning default");
-            return default(TValue);
+            return default;
         }
         variableName = variableName.Trim();
         return accessType switch
         {
             TraverseAccessType.Field => traverse.Field(variableName).GetValue<TValue>(),
             TraverseAccessType.Property => traverse.Property(variableName).GetValue<TValue>(),
-            _ => default(TValue)
+            _ => default
         };
     }
 
@@ -40,7 +40,7 @@ internal class TraverseUtils
         if (traverse == null)
         {
             ModLog.Error($"Failed to get null value from object of type `{obj.GetType()}`! Returning default");
-            return default(TValue);
+            return default;
         }
         return GetValue<TValue>(traverse, variableName, accessType);
     }
