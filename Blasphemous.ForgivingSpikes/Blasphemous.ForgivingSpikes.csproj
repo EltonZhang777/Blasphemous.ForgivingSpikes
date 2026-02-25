@@ -9,7 +9,7 @@
     <Authors>NewbieElton</Authors>
     <Company>NewbieElton</Company>
     <Description>A Blasphemous 1 mod that makes spike, fall, and other trap penalty more forgiving. Highly customizable with other mods or by config.</Description>
-    <Version>0.1.0</Version>
+    <Version>1.0.0</Version>
 
     <TargetName>ForgivingSpikes</TargetName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
