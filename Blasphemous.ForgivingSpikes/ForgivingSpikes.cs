@@ -12,6 +12,8 @@ internal class ForgivingSpikes : BlasMod
 {
     internal Config config;
 
+    private Coroutine _storeSafePositionCoroutine;
+
     internal ForgivingSpikes() : base(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_AUTHOR, ModInfo.MOD_VERSION) { }
 
     protected override void OnInitialize()
@@ -28,7 +30,9 @@ internal class ForgivingSpikes : BlasMod
 
     protected override void OnRegisterServices(ModServiceProvider provider)
     {
+#if DEBUG
         provider.RegisterCommand(new SpikeCommand());
+#endif
     }
 
     protected override void OnAllInitialized()
@@ -39,19 +43,31 @@ internal class ForgivingSpikes : BlasMod
         // if TPO changed level, it must be out of spikes and alive.
         PatchController.diedToSpikeDamage = false;
 
-        Coroutine storeSafePositionCoroutine = null;
         if (SceneHelper.GameSceneLoaded)
         {
+            // Start the coroutine that continuously stores safe position
             if (!PatchController.isStoringSafePosition)
             {
                 PatchController.isStoringSafePosition = true;
-                storeSafePositionCoroutine = UIController.instance.StartCoroutine(PatchController.StoreLastSafePosition(PatchController.storeSafePositionInterval));
+                _storeSafePositionCoroutine = UIController.instance.StartCoroutine(
+                    PatchController.StoreLastSafePosition(PatchController.storeSafePositionInterval));
             }
+
+            // sync TPO's CheckTrap hitbox size (because it resets when loading a new scene)
+            PatchController.SyncCheckTrapHitboxSize();
         }
-        else if (SceneHelper.MenuSceneLoaded)
+
+        if (SceneHelper.MenuSceneLoaded)
         {
             PatchController.isStoringSafePosition = false;
-            UIController.instance.StopCoroutine(storeSafePositionCoroutine);
+            if (_storeSafePositionCoroutine != null)
+            {
+                try
+                {
+                    UIController.instance.StopCoroutine(_storeSafePositionCoroutine);
+                }
+                catch { }
+            }
         }
     }
 

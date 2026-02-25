@@ -19,7 +19,7 @@ internal static class PatchController
     internal static GameObject TpoCheckTrapParent => Core.Logic.Penitent.transform.Find("#Constitution/Feet").gameObject;
     internal static bool diedToSpikeDamage = false;
     internal static Queue<Vector3> safePositionQueue = new();
-    internal static float storeSafePositionInterval;
+    internal static float storeSafePositionInterval = 1f;
     internal static bool isStoringSafePosition = false;
 
     /// <summary>
@@ -55,7 +55,7 @@ internal static class PatchController
         offset = collider.offset;
     }
 
-    internal static bool Prefix_DoModSpikeDamage()
+    internal static bool InflictModSpikeDamage()
     {
         // if instakill, execute vanilla code
         if (SpikeUtilities.CurrentConfig.spikePenaltyType == SpikePenaltyConfig.SpikePenaltyType.Instakill)
@@ -65,21 +65,23 @@ internal static class PatchController
         SpikeUtilities.DealSpikeDamageToPenitent();
         if (Core.Logic.Penitent.Stats.Life.Current <= 0)
         {
+            // if penitent would die, execute vanilla code to instakill
             PatchController.diedToSpikeDamage = true;
             return true;
         }
 
         // start respawn coroutine if didn't die to spike damage
-        UIController.instance.StartCoroutine(SpikeUtilities.TpoRespawnCoroutine());
+        UIController.instance.StartCoroutine(SpikeUtilities.TpoSpikeRespawnCoroutine());
         return false;
     }
 
-    internal static void Postfix_SyncCheckTrapHitboxSize()
+    internal static void SyncCheckTrapHitboxSize()
     {
         PatchController.GetTpoDamageAreaColliderSizeAndOffset(out Vector2 size, out Vector2 offset);
         BoxCollider2D collider = PatchController.TpoCheckTrapParent.GetComponent<BoxCollider2D>();
-        collider.size = new Vector2(size.x, size.y * 1.0f);
-        collider.offset = offset;
+        collider.size = new Vector2(size.x * 1f, size.y * 1f);
+        // offset the CheckTrap hitbox's offset to match the position of Penitent's body
+        collider.offset = new Vector2(offset.x - 0.19f, offset.y - 0.08f - 0.9211218f);
     }
 
     /// <summary>

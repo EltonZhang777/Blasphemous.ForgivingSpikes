@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Blasphemous.ForgivingSpikes.Commands;
 
+/// <summary>
+/// WIP command for controlling spike config in-game
+/// </summary>
 internal class SpikeCommand : ModCommand
 {
     protected override string CommandName => "spike";
@@ -40,7 +43,7 @@ internal class SpikeCommand : ModCommand
         if (!ValidateParameterList(parameters, 0))
             return;
 
-        UIController.instance.StartCoroutine(SpikeUtilities.TpoRespawnCoroutine());
+        UIController.instance.StartCoroutine(SpikeUtilities.TpoSpikeRespawnCoroutine());
     }
 
     private bool ValidateParameterList(string[] parameters, List<int> validParameterLengths)

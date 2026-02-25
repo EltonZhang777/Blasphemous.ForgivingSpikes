@@ -3,32 +3,27 @@ using HarmonyLib;
 
 namespace Blasphemous.ForgivingSpikes.Patches;
 
-[HarmonyPatch(typeof(PenitentDamageArea), "SetTopSmallDamageArea")]
-class PenitentDamageArea_SetTopSmallDamageArea_SyncCheckTrapHitboxSize_Patch
+[HarmonyPatch(typeof(PenitentDamageArea))]
+class PenitentDamageArea_SyncCheckTrapHitboxSize_Patch
 {
+    [HarmonyPatch("SetTopSmallDamageArea")]
     [HarmonyPostfix]
-    public static void Postfix()
+    public static void SyncTopSmall()
     {
-        PatchController.Postfix_SyncCheckTrapHitboxSize();
+        PatchController.SyncCheckTrapHitboxSize();
     }
-}
 
-[HarmonyPatch(typeof(PenitentDamageArea), "SetBottomSmallDamageArea")]
-class PenitentDamageArea_SetBottomSmallDamageArea_SyncCheckTrapHitboxSize_Patch
-{
+    [HarmonyPatch("SetBottomSmallDamageArea")]
     [HarmonyPostfix]
-    public static void Postfix()
+    public static void SyncBottomSmall()
     {
-        PatchController.Postfix_SyncCheckTrapHitboxSize();
+        PatchController.SyncCheckTrapHitboxSize();
     }
-}
 
-[HarmonyPatch(typeof(PenitentDamageArea), "SetDefaultDamageArea")]
-class PenitentDamageArea_SetDefaultDamageArea_SyncCheckTrapHitboxSize_Patch
-{
+    [HarmonyPatch("SetDefaultDamageArea")]
     [HarmonyPostfix]
-    public static void Postfix()
+    public static void SyncDefault()
     {
-        PatchController.Postfix_SyncCheckTrapHitboxSize();
+        PatchController.SyncCheckTrapHitboxSize();
     }
 }
