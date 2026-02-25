@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Blasphemous.ForgivingSpikes.Commands;
 
+/// <summary>
+/// WIP command for controlling spike config in-game
+/// </summary>
 internal class SpikeCommand : ModCommand
 {
     protected override string CommandName => "spike";
