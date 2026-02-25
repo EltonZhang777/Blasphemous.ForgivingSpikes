@@ -40,7 +40,7 @@ internal class SpikeCommand : ModCommand
         if (!ValidateParameterList(parameters, 0))
             return;
 
-        UIController.instance.StartCoroutine(SpikeUtilities.TpoRespawnCoroutine());
+        UIController.instance.StartCoroutine(SpikeUtilities.TpoSpikeRespawnCoroutine());
     }
 
     private bool ValidateParameterList(string[] parameters, List<int> validParameterLengths)

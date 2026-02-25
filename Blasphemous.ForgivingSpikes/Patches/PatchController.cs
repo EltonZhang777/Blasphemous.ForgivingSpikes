@@ -71,7 +71,7 @@ internal static class PatchController
         }
 
         // start respawn coroutine if didn't die to spike damage
-        UIController.instance.StartCoroutine(SpikeUtilities.TpoRespawnCoroutine());
+        UIController.instance.StartCoroutine(SpikeUtilities.TpoSpikeRespawnCoroutine());
         return false;
     }
 
