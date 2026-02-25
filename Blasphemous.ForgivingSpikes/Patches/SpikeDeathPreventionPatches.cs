@@ -1,10 +1,6 @@
-﻿using Framework.FrameworkCore;
-using Framework.Managers;
+﻿using Framework.Managers;
 using Gameplay.GameControllers.Entities;
-using Gameplay.GameControllers.Penitent;
-using Gameplay.GameControllers.Penitent.Spawn;
 using HarmonyLib;
-using UnityEngine;
 
 namespace Blasphemous.ForgivingSpikes.Patches;
 
@@ -48,56 +44,5 @@ class EventManager_PreventPenitentDeath_Patch
             return true;
 
         return false;
-    }
-}
-
-[HarmonyPatch(typeof(SpawnManager))]
-class SpawnManager_ShowDebugInfo_Patch
-{
-    [HarmonyPatch("CreatePlayer")]
-    [HarmonyPrefix]
-    public static void Prefix(
-        Vector3 position,
-        EntityOrientation orientation,
-        bool createNewInstance)
-    {
-        Main.LogIfDebug($"Invoked Core.SpawnManager.CreatePlayer({position}, {orientation}, {createNewInstance}) !");
-    }
-
-    [HarmonyPatch("CreatePlayer")]
-    [HarmonyPostfix]
-    public static void Postfix()
-    {
-        Main.LogIfDebug($"Core.SpawnManager.CreatePlayer() executed successfully!");
-    }
-}
-
-[HarmonyPatch(typeof(Penitent))]
-class Penitent_ShowDebugInfo_Patch
-{
-    [HarmonyPatch("CherubRespawn")]
-    [HarmonyPrefix]
-    public static void Prefix(
-        GameObject ___Cherubs)
-    {
-        Main.LogIfDebug($"Cherubs is null?: {___Cherubs == null}");
-    }
-}
-
-[HarmonyPatch(typeof(CherubRespawn))]
-class CherubRespawn_ShowDebugInfo_Patch
-{
-    [HarmonyPatch("Start")]
-    [HarmonyPrefix]
-    public static void StartPrefix()
-    {
-        Main.LogIfDebug($"Started CherubRespawn!");
-    }
-
-    [HarmonyPatch("Awake")]
-    [HarmonyPrefix]
-    public static void AwakePrefix()
-    {
-        Main.LogIfDebug($"CherubRespawn awoken!");
     }
 }

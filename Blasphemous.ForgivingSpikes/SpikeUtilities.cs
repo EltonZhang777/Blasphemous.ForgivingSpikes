@@ -1,5 +1,6 @@
 ﻿using Blasphemous.ForgivingSpikes.Components;
 using Blasphemous.ForgivingSpikes.Patches;
+using Blasphemous.ModdingAPI;
 using DG.Tweening;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
@@ -83,7 +84,7 @@ public static class SpikeUtilities
     /// </summary>
     public static void UseGlobalConfig()
     {
-        Main.LogIfDebug($"Using global config for spikes!");
+        ModLog.Warn($"Using global config for spikes!");
         CurrentConfig = GlobalConfig;
         IsUsingGlobalConfig = true;
     }

@@ -82,7 +82,6 @@ internal static class PatchController
         collider.size = new Vector2(size.x * 1f, size.y * 1f);
         // offset the CheckTrap hitbox's offset to match the position of Penitent's body
         collider.offset = new Vector2(offset.x - 0.19f, offset.y - 0.08f - 0.9211218f);
-        Main.LogIfDebug($"new CheckTrap hitbox size: {size}, offset: {offset}");
     }
 
     /// <summary>
