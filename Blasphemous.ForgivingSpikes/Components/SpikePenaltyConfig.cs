@@ -2,41 +2,52 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using UnityEngine;
+using System.ComponentModel;
 
 namespace Blasphemous.ForgivingSpikes.Components;
 
 /// <summary>
 /// Contains a set of specifications of how spikes penalize TPO
 /// </summary>
+[JsonObject(MissingMemberHandling = MissingMemberHandling.Error)]
 public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
 {
     /// <summary>
     /// Current spike penalty type
     /// </summary>
+    [DefaultValue(SpikePenaltyType.Instakill)]
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
     [JsonConverter(typeof(StringEnumConverter))]
     public SpikePenaltyType spikePenaltyType;
 
     /// <summary>
     /// Damage amount of the spike. 
-    /// If <see cref="spikePenaltyType"/> is <see cref="SpikePenaltyType.PercentageDamage"/>, it is a ratio to TPO's max health in range [0, 1]
+    /// If <see cref="spikePenaltyType"/> is <see cref="SpikePenaltyType.PercentageDamage"/>, it is multiplied by TPO's max health.
     /// </summary>
+    [DefaultValue(0f)]
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
     public float spikeDamageAmount;
 
     /// <summary>
     /// Whether spike's damage ignore defense and damage reduction
     /// </summary>
+    [DefaultValue(true)]
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
     public bool spikeDamageIgnoreDefense = true;
 
     /// <summary>
     /// Damage element of spike's damage
     /// </summary>
+    [DefaultValue(DamageArea.DamageElement.Normal)]
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
     [JsonConverter(typeof(StringEnumConverter))]
     public DamageArea.DamageElement spikeDamageElement = DamageArea.DamageElement.Normal;
 
     /// <summary>
     /// Damage element of spike's damage
     /// </summary>
+    [DefaultValue(DamageArea.DamageType.Heavy)]
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
     [JsonConverter(typeof(StringEnumConverter))]
     public DamageArea.DamageType spikeDamageType = DamageArea.DamageType.Heavy;
 
@@ -94,11 +105,6 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
         this.spikeDamageElement = spikeDamageElement;
         this.spikeDamageType = spikeDamageType;
 
-        if (spikePenaltyType == SpikePenaltyType.PercentageDamage)
-        {
-            // ratio to TPO's max HP must be in range [0, 1]
-            this.spikeDamageAmount = Mathf.Clamp01(spikeDamageAmount);
-        }
     }
 
     /// <inheritdoc/>

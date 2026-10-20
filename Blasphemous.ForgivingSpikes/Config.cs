@@ -1,10 +1,12 @@
 ﻿using Blasphemous.ForgivingSpikes.Components;
+using Newtonsoft.Json;
 
 namespace Blasphemous.ForgivingSpikes;
 
 /// <summary>
 /// Main config for ForgivingSpikes mod
 /// </summary>
+[JsonObject(MissingMemberHandling = MissingMemberHandling.Error)]
 public class Config
 {
     /// <summary>
