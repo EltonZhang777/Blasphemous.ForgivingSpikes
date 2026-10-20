@@ -1,6 +1,7 @@
 ﻿using Gameplay.GameControllers.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.ComponentModel;
 
@@ -17,7 +18,7 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     /// </summary>
     [DefaultValue(SpikePenaltyType.Instakill)]
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter), typeof(DefaultNamingStrategy), new object[0], false)]
     public SpikePenaltyType spikePenaltyType;
 
     /// <summary>
@@ -40,7 +41,7 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     /// </summary>
     [DefaultValue(DamageArea.DamageElement.Normal)]
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter), typeof(DefaultNamingStrategy), new object[0], false)]
     public DamageArea.DamageElement spikeDamageElement = DamageArea.DamageElement.Normal;
 
     /// <summary>
@@ -48,7 +49,7 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     /// </summary>
     [DefaultValue(DamageArea.DamageType.Heavy)]
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter), typeof(DefaultNamingStrategy), new object[0], false)]
     public DamageArea.DamageType spikeDamageType = DamageArea.DamageType.Heavy;
 
     /// <summary>
