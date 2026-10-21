@@ -1,18 +1,17 @@
 ﻿using Blasphemous.CheatConsole;
 using Blasphemous.ForgivingSpikes.Components;
+using Blasphemous.NewbieEltonLibs.CheatConsole;
 using Gameplay.GameControllers.Entities;
 using Gameplay.UI;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 
 namespace Blasphemous.ForgivingSpikes.Commands;
 
 /// <summary>
 /// Command for viewing and editing the global spike configuration
 /// </summary>
-internal class SpikeCommand : ModCommand
+internal class SpikeCommand : AutoModCommand
 {
     private const string ValidFields = "spikePenaltyType, spikeDamageAmount, spikeDamageIgnoreDefense, spikeDamageElement, spikeDamageType";
 
@@ -25,28 +24,9 @@ internal class SpikeCommand : ModCommand
 
     protected override string CommandName => "spike";
 
-    protected override bool AllowUppercase => true;
-
-    protected override Dictionary<string, Action<string[]>> AddSubCommands()
-    {
-        Dictionary<string, Action<string[]>> result = new()
-        {
-            { "help", SubCommand_Help },
-            { "current", SubCommand_Current },
-            { "set", SubCommand_Set }
-        };
-
-#if DEBUG
-        result.Add("respawn", SubCommand_Respawn);
-#endif
-        return result;
-    }
-
+    [ModSubCommand("help", "show available spike commands", null, 0)]
     private void SubCommand_Help(string[] parameters)
     {
-        if (!ValidateParameterList(parameters, 0))
-            return;
-
 #if DEBUG
         Write($"{CommandName} respawn : (debug use) show the spike respawn animation");
 #endif
@@ -56,11 +36,9 @@ internal class SpikeCommand : ModCommand
         Write("PercentageDamage treats spikeDamageAmount as a max-health multiplier (0.5 = 50%).");
     }
 
+    [ModSubCommand("current", "show this mod's global spike configuration", null, 0)]
     private void SubCommand_Current(string[] parameters)
     {
-        if (!ValidateParameterList(parameters, 0))
-            return;
-
         SpikePenaltyConfig config = SpikeUtilities.GlobalConfig;
         Write($"spikePenaltyType: {config.spikePenaltyType}");
         Write($"spikeDamageAmount: {config.spikeDamageAmount.ToString("R", CultureInfo.InvariantCulture)}");
@@ -69,11 +47,9 @@ internal class SpikeCommand : ModCommand
         Write($"spikeDamageType: {config.spikeDamageType}");
     }
 
+    [ModSubCommand("set", "update and save one global spike setting", "set <field> <value>", 2)]
     private void SubCommand_Set(string[] parameters)
     {
-        if (!ValidateParameterList(parameters, 2))
-            return;
-
         string field = parameters[0];
         string value = parameters[1];
         SpikePenaltyConfig updated = SpikeUtilities.GlobalConfig;
@@ -168,32 +144,11 @@ internal class SpikeCommand : ModCommand
         return string.Join(", ", Enum.GetNames(typeof(T)));
     }
 
+#if DEBUG
+    [ModSubCommand("respawn", "(debug use) show the spike respawn animation", null, 0)]
     private void SubCommand_Respawn(string[] parameters)
     {
-        if (!ValidateParameterList(parameters, 0))
-            return;
-
         UIController.instance.StartCoroutine(SpikeUtilities.TpoSpikeRespawnCoroutine());
     }
-
-    private bool ValidateParameterList(string[] parameters, List<int> validParameterLengths)
-    {
-        if (!validParameterLengths.Contains(parameters.Length))
-        {
-            StringBuilder sb = new();
-            sb.Append($"This command takes ");
-            for (int i = 0; i < validParameterLengths.Count; i++)
-            {
-                sb.Append($"{i} ");
-                if (i != validParameterLengths.Count - 1)
-                    sb.Append("or ");
-            }
-            sb.Append($"parameters.  You passed {parameters.Length}");
-            Write(sb.ToString());
-
-            return false;
-        }
-
-        return true;
-    }
+#endif
 }
