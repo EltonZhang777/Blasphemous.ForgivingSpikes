@@ -61,10 +61,8 @@ public static class SpikeUtilities
     public static void SetCurrentConfig(SpikePenaltyConfig config)
     {
         CurrentConfig = config;
-        if (CurrentConfig != GlobalConfig)
-        {
-            IsUsingGlobalConfig = false;
-        }
+        // Explicit selections are overrides even when their values equal the global config.
+        IsUsingGlobalConfig = false;
     }
 
     /// <summary>
