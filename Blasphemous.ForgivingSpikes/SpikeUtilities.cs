@@ -1,6 +1,8 @@
 ﻿using Blasphemous.ForgivingSpikes.Components;
 using Blasphemous.ForgivingSpikes.Patches;
 using Blasphemous.ModdingAPI;
+using Blasphemous.NewbieEltonLibs.Extensions.GameLibs;
+using Blasphemous.NewbieEltonLibs.Extensions.ModdingAPI;
 using DG.Tweening;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
@@ -61,10 +63,8 @@ public static class SpikeUtilities
     public static void SetCurrentConfig(SpikePenaltyConfig config)
     {
         CurrentConfig = config;
-        if (CurrentConfig != GlobalConfig)
-        {
-            IsUsingGlobalConfig = false;
-        }
+        // Explicit selections are overrides even when their values equal the global config.
+        IsUsingGlobalConfig = false;
     }
 
     /// <summary>
@@ -191,17 +191,17 @@ public static class SpikeUtilities
         Tpo.Teleport(tpoCurrentPosition);  // stop Penitent from moving
 
         // if safe position is in spikes, revert safe position to a moment ago until it is away from spikes
-        List<Vector3> safePositions = PatchController.safePositionQueue.ToList();
+        List<Vector3> safePositions = [.. PatchController.safePositionQueue];
         for (int i = PatchController.safePositionQueue.Count - 1; i >= 0; i--)
         {
-            Main.LogIfDebug($"Safe Position too close in spikes! Reverting safe position to a moment ago");
+            ModLogExtensions.WarnIfDebugBuild($"Safe Position too close in spikes! Reverting safe position to a moment ago");
             if ((tpoCurrentPosition - safePositions[i]).magnitude > 0.2f)
             {
                 storedSafePosition = safePositions[i];
                 break;
             }
         }
-        Main.LogIfDebug($"Safe position after safety fallback: {storedSafePosition}");
+        ModLogExtensions.WarnIfDebugBuild($"Safe position after safety fallback: {storedSafePosition}");
 
         // disable player input
         Core.Input.SetBlocker(inputBlockerName, true);
@@ -217,7 +217,8 @@ public static class SpikeUtilities
 
         // delay and respawn
         yield return new WaitForSeconds(delayBeforeRespawn);
-        Traverse.Create(Core.LevelManager).Property("LastSafePosition").SetValue(storedSafePosition);  // restore safe position
+        Traverse traverse = Traverse.Create(Core.LevelManager);
+        TraverseUtils.SetValue(ref traverse, "LastSafePosition", storedSafePosition, TraverseUtils.TraverseAccessType.Property);  // restore safe position
         Tpo.Teleport(storedSafePosition);
         tweener = TpoSprite.DOFade(1, Time.deltaTime);  // set Penitent visible
         yield return tweener.WaitForCompletion();
@@ -227,8 +228,8 @@ public static class SpikeUtilities
 
         // reset death flags
         CheckTrap checkTrap = Tpo.GetComponentInChildren<CheckTrap>();
-        Traverse.Create(checkTrap).Property("DeathBySpike").SetValue(false);
-        Traverse.Create(checkTrap).Property("DeathByFall").SetValue(false);
+        TraverseUtils.SetValue(ref checkTrap, "DeathBySpike", false, TraverseUtils.TraverseAccessType.Property);
+        TraverseUtils.SetValue(ref checkTrap, "DeathByFall", false, TraverseUtils.TraverseAccessType.Property);
 
         // regain player control after respawn
         Core.Input.SetBlocker(inputBlockerName, false);
@@ -236,4 +237,3 @@ public static class SpikeUtilities
         yield break;
     }
 }
-
