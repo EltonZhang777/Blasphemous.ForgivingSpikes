@@ -19,33 +19,22 @@ A Blasphemous 1 mod that makes spike, fall, and other trap penalty more forgivin
 
 ## Usage
 
-The spike configuration commands are available in both Release and Debug builds:
+Spike settings can be configured via either command or config file:
 
-- `spike current`: show all five fields and values from this mod's global spike configuration.
-- `spike set <field> <value>`: update and save one field per invocation. Successful changes persist across launches; invalid fields and values are rejected with the accepted inputs.
+commands: 
+- `spike current`: show global spike configuration.
+- `spike set <field> <value>`: update and save a property of spike configuration.
+  - e.g. `spike set spikeDamageAmount 30`
 
-Supported fields and values:
+The `spike set` command accepts the below-listed `SpikePenaltyConfig` fields and values, which are also configurable in the `.cfg` file:
 
 - `spikePenaltyType`: `Instakill`, `FixedDamage`, or `PercentageDamage`.
 - `spikeDamageAmount`: a `Single` value using `.` as the decimal separator, such as `1.5`, `-1`, or `1e-3`; `NaN`, `Infinity`, and `-Infinity` are also accepted.
+  - With `FixedDamage`, this is the damage amount.
+  - With `PercentageDamage`, it is a multiplier of Penitent's maximum health (`0.5` means 50%).
 - `spikeDamageIgnoreDefense`: `true` or `false`.
 - `spikeDamageElement`: `Normal`, `Fire`, `Toxic`, `Lightning`, `Magic`, or `Contact`.
 - `spikeDamageType`: `Normal`, `Heavy`, `Critical`, `Simple`, `Stunt`, or `OptionalStunt`.
-
-When `spikePenaltyType` is `PercentageDamage`, `spikeDamageAmount` is a multiplier of Penitent's maximum health: `0.5` means 50%. The `spike respawn` command remains available only in Debug builds.
-
-`SpikePenaltyConfig` has the following configurable fields that you can change in `.cfg` file:
-
-- `spikePenaltyType`: "Instakill", "FixedDamage" or "PercentageDamage"
-- `spikeDamageAmount`:
-  -  if `spikePenaltyType` is "FixedDamage", then its amount is fixed damage amount
-  -  if `spikePenaltyType` is "PercentageDamage", then its amount is multiplied by Penitent's max health
-- `spikeDamageIgnoreDefense`: Whether to ignore defense or not 
-  - (value: `true` / `false`)
-- `spikeDamageElement`: Damage element of the spike
-  - (value: `Normal` / `Fire` / `Toxic` / `Lightning` / `Magic`, `Contact`)
-- `spikeDamageType`: Damage type of the spike
-  - (value: `Normal` / `Heavy` / `Critical` / `Simple` / `Stunt` / `OptionalStunt`)
 
 When JSON omits fields from `globalSpikePenaltyConfig`, defaults are `Instakill`, `0`, `true`, `Normal`, and `Heavy`, respectively. If the entire `globalSpikePenaltyConfig` field is omitted, the config defaults to vanilla instakill behavior.
 
