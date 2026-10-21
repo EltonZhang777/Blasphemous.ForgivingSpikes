@@ -30,9 +30,7 @@ internal class ForgivingSpikes : BlasMod
 
     protected override void OnRegisterServices(ModServiceProvider provider)
     {
-#if DEBUG
-        provider.RegisterCommand(new SpikeCommand());
-#endif
+        provider.RegisterCommand(new SpikeCommand(this));
     }
 
     protected override void OnAllInitialized()

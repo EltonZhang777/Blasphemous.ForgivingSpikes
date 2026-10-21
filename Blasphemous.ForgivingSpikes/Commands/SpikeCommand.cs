@@ -1,69 +1,154 @@
 ﻿using Blasphemous.CheatConsole;
+using Blasphemous.ForgivingSpikes.Components;
+using Blasphemous.NewbieEltonLibs.CheatConsole;
+using Gameplay.GameControllers.Entities;
 using Gameplay.UI;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
 
 namespace Blasphemous.ForgivingSpikes.Commands;
 
 /// <summary>
-/// WIP command for controlling spike config in-game
+/// Command for viewing and editing the global spike configuration
 /// </summary>
-internal class SpikeCommand : ModCommand
+internal class SpikeCommand : AutoModCommand
 {
-    protected override string CommandName => "spike";
+    private const string ValidFields = "spikePenaltyType, spikeDamageAmount, spikeDamageIgnoreDefense, spikeDamageElement, spikeDamageType";
 
-    protected override bool AllowUppercase => true;
+    private readonly ForgivingSpikes _mod;
 
-    protected override Dictionary<string, Action<string[]>> AddSubCommands()
+    internal SpikeCommand(ForgivingSpikes mod)
     {
-        Dictionary<string, Action<string[]>> result = new()
-        {
-            { "help", SubCommand_Help }
-        };
-
-#if DEBUG
-        result.Add("respawn", SubCommand_Respawn);
-#endif
-        return result;
+        _mod = mod;
     }
 
+    protected override string CommandName => "spike";
+
+    [ModSubCommand("help", "show available spike commands", null, 0)]
     private void SubCommand_Help(string[] parameters)
     {
-        if (!ValidateParameterList(parameters, 0))
-            return;
-
 #if DEBUG
         Write($"{CommandName} respawn : (debug use) show the spike respawn animation");
 #endif
+        Write($"{CommandName} current : show this mod's global spike configuration");
+        Write($"{CommandName} set <field> <value> : update and save one global spike setting");
+        Write($"Valid fields: {ValidFields}");
+        Write("PercentageDamage treats spikeDamageAmount as a max-health multiplier (0.5 = 50%).");
     }
 
-    private void SubCommand_Respawn(string[] parameters)
+    [ModSubCommand("current", "show this mod's global spike configuration", null, 0)]
+    private void SubCommand_Current(string[] parameters)
     {
-        if (!ValidateParameterList(parameters, 0))
-            return;
-
-        UIController.instance.StartCoroutine(SpikeUtilities.TpoSpikeRespawnCoroutine());
+        SpikePenaltyConfig config = SpikeUtilities.GlobalConfig;
+        Write($"spikePenaltyType: {config.spikePenaltyType}");
+        Write($"spikeDamageAmount: {config.spikeDamageAmount.ToString("R", CultureInfo.InvariantCulture)}");
+        Write($"spikeDamageIgnoreDefense: {config.spikeDamageIgnoreDefense}");
+        Write($"spikeDamageElement: {config.spikeDamageElement}");
+        Write($"spikeDamageType: {config.spikeDamageType}");
     }
 
-    private bool ValidateParameterList(string[] parameters, List<int> validParameterLengths)
+    [ModSubCommand("set", "update and save one global spike setting", "set <field> <value>", 2)]
+    private void SubCommand_Set(string[] parameters)
     {
-        if (!validParameterLengths.Contains(parameters.Length))
+        string field = parameters[0];
+        string value = parameters[1];
+        SpikePenaltyConfig updated = SpikeUtilities.GlobalConfig;
+        string savedValue;
+
+        switch (field)
         {
-            StringBuilder sb = new();
-            sb.Append($"This command takes ");
-            for (int i = 0; i < validParameterLengths.Count; i++)
-            {
-                sb.Append($"{i} ");
-                if (i != validParameterLengths.Count - 1)
-                    sb.Append("or ");
-            }
-            sb.Append($"parameters.  You passed {parameters.Length}");
-            Write(sb.ToString());
-
-            return false;
+            case "spikePenaltyType":
+                if (!TryParseEnum(value, out SpikePenaltyConfig.SpikePenaltyType penaltyType))
+                {
+                    Write($"Invalid value for {field}: '{value}'. Accepted values: {EnumValueNames<SpikePenaltyConfig.SpikePenaltyType>()}.");
+                    return;
+                }
+                updated.spikePenaltyType = penaltyType;
+                savedValue = penaltyType.ToString();
+                break;
+            case "spikeDamageAmount":
+                if (!float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out float damageAmount))
+                {
+                    Write($"Invalid value for {field}: '{value}'. Use '.' as the decimal separator; Single values include negative numbers, NaN, Infinity, and -Infinity.");
+                    return;
+                }
+                updated.spikeDamageAmount = damageAmount;
+                savedValue = damageAmount.ToString("R", CultureInfo.InvariantCulture);
+                break;
+            case "spikeDamageIgnoreDefense":
+                if (!bool.TryParse(value, out bool ignoreDefense))
+                {
+                    Write($"Invalid value for {field}: '{value}'. Accepted values: true, false.");
+                    return;
+                }
+                updated.spikeDamageIgnoreDefense = ignoreDefense;
+                savedValue = ignoreDefense.ToString();
+                break;
+            case "spikeDamageElement":
+                if (!TryParseEnum(value, out DamageArea.DamageElement damageElement))
+                {
+                    Write($"Invalid value for {field}: '{value}'. Accepted values: {EnumValueNames<DamageArea.DamageElement>()}.");
+                    return;
+                }
+                updated.spikeDamageElement = damageElement;
+                savedValue = damageElement.ToString();
+                break;
+            case "spikeDamageType":
+                if (!TryParseEnum(value, out DamageArea.DamageType damageType))
+                {
+                    Write($"Invalid value for {field}: '{value}'. Accepted values: {EnumValueNames<DamageArea.DamageType>()}.");
+                    return;
+                }
+                updated.spikeDamageType = damageType;
+                savedValue = damageType.ToString();
+                break;
+            default:
+                Write($"Invalid field '{field}'. Valid fields: {ValidFields}.");
+                return;
         }
 
-        return true;
+        SpikePenaltyConfig previous = _mod.config.globalSpikePenaltyConfig;
+        _mod.config.globalSpikePenaltyConfig = updated;
+        try
+        {
+            _mod.ConfigHandler.Save(_mod.config);
+        }
+        catch (Exception exception)
+        {
+            _mod.config.globalSpikePenaltyConfig = previous;
+            Write($"Could not save {field}: {exception.Message}");
+            return;
+        }
+
+        SpikeUtilities.SetGlobalConfig(updated);
+        Write($"Saved {field} = {savedValue}.");
     }
+
+    private static bool TryParseEnum<T>(string value, out T parsedValue) where T : struct
+    {
+        foreach (string name in Enum.GetNames(typeof(T)))
+        {
+            if (string.Equals(name, value, StringComparison.OrdinalIgnoreCase))
+            {
+                parsedValue = (T)Enum.Parse(typeof(T), name);
+                return true;
+            }
+        }
+
+        parsedValue = default;
+        return false;
+    }
+
+    private static string EnumValueNames<T>() where T : struct
+    {
+        return string.Join(", ", Enum.GetNames(typeof(T)));
+    }
+
+#if DEBUG
+    [ModSubCommand("respawn", "(debug use) show the spike respawn animation", null, 0)]
+    private void SubCommand_Respawn(string[] parameters)
+    {
+        UIController.instance.StartCoroutine(SpikeUtilities.TpoSpikeRespawnCoroutine());
+    }
+#endif
 }
