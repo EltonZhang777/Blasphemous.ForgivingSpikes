@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using Blasphemous.ModdingAPI;
 
 namespace Blasphemous.ForgivingSpikes;
 
@@ -13,12 +12,5 @@ internal class Main : BaseUnityPlugin
     private void Start()
     {
         ForgivingSpikes = new ForgivingSpikes();
-    }
-
-    internal static void LogIfDebug(string message)
-    {
-#if DEBUG
-        ModLog.Warn($"[DEBUG] {message}");
-#endif
     }
 }

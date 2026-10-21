@@ -1,9 +1,9 @@
 ﻿using Blasphemous.ForgivingSpikes.Components;
+using Blasphemous.NewbieEltonLibs.Extensions.GameLibs;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent.Damage;
 using Gameplay.UI;
-using HarmonyLib;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +50,7 @@ internal static class PatchController
     internal static void GetTpoDamageAreaColliderSizeAndOffset(out Vector2 size, out Vector2 offset)
     {
         PenitentDamageArea penitentDamageArea = Core.Logic.Penitent.gameObject.GetComponentInChildren<PenitentDamageArea>();
-        BoxCollider2D collider = Traverse.Create(penitentDamageArea).Field("_damageAreaCollider").GetValue<BoxCollider2D>();
+        BoxCollider2D collider = TraverseUtils.GetValue<BoxCollider2D>(penitentDamageArea, "_damageAreaCollider");
         size = collider.size;
         offset = collider.offset;
     }
