@@ -10,8 +10,16 @@ namespace Blasphemous.ForgivingSpikes.Components;
 /// <summary>
 /// Contains a set of specifications of how spikes penalize TPO
 /// </summary>
+/// <remarks>
+/// Constructor of <see cref="SpikePenaltyConfig"/>
+/// </remarks>
 [JsonObject(MissingMemberHandling = MissingMemberHandling.Error)]
-public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
+public struct SpikePenaltyConfig(
+SpikePenaltyConfig.SpikePenaltyType spikePenaltyType,
+    float spikeDamageAmount,
+    bool spikeDamageIgnoreDefense = true,
+    DamageArea.DamageElement spikeDamageElement = DamageArea.DamageElement.Normal,
+    DamageArea.DamageType spikeDamageType = DamageArea.DamageType.Heavy) : IEquatable<SpikePenaltyConfig>
 {
     /// <summary>
     /// Current spike penalty type
@@ -19,7 +27,7 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     [DefaultValue(SpikePenaltyType.Instakill)]
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
     [JsonConverter(typeof(StringEnumConverter), typeof(DefaultNamingStrategy), new object[0], false)]
-    public SpikePenaltyType spikePenaltyType;
+    public SpikePenaltyType spikePenaltyType = spikePenaltyType;
 
     /// <summary>
     /// Damage amount of the spike. 
@@ -27,14 +35,14 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     /// </summary>
     [DefaultValue(0f)]
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-    public float spikeDamageAmount;
+    public float spikeDamageAmount = spikeDamageAmount;
 
     /// <summary>
     /// Whether spike's damage ignore defense and damage reduction
     /// </summary>
     [DefaultValue(true)]
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-    public bool spikeDamageIgnoreDefense = true;
+    public bool spikeDamageIgnoreDefense = spikeDamageIgnoreDefense;
 
     /// <summary>
     /// Damage element of spike's damage
@@ -42,7 +50,7 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     [DefaultValue(DamageArea.DamageElement.Normal)]
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
     [JsonConverter(typeof(StringEnumConverter), typeof(DefaultNamingStrategy), new object[0], false)]
-    public DamageArea.DamageElement spikeDamageElement = DamageArea.DamageElement.Normal;
+    public DamageArea.DamageElement spikeDamageElement = spikeDamageElement;
 
     /// <summary>
     /// Damage element of spike's damage
@@ -50,7 +58,7 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     [DefaultValue(DamageArea.DamageType.Heavy)]
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
     [JsonConverter(typeof(StringEnumConverter), typeof(DefaultNamingStrategy), new object[0], false)]
-    public DamageArea.DamageType spikeDamageType = DamageArea.DamageType.Heavy;
+    public DamageArea.DamageType spikeDamageType = spikeDamageType;
 
     /// <summary>
     /// Quick default config for spikes to instakill TPO as vanilla does.
@@ -90,24 +98,6 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
         PercentageDamage
     }
 
-    /// <summary>
-    /// Constructor of <see cref="SpikePenaltyConfig"/>
-    /// </summary>
-    public SpikePenaltyConfig(
-        SpikePenaltyType spikePenaltyType,
-        float spikeDamageAmount,
-        bool spikeDamageIgnoreDefense = true,
-        DamageArea.DamageElement spikeDamageElement = DamageArea.DamageElement.Normal,
-        DamageArea.DamageType spikeDamageType = DamageArea.DamageType.Heavy)
-    {
-        this.spikePenaltyType = spikePenaltyType;
-        this.spikeDamageAmount = spikeDamageAmount;
-        this.spikeDamageIgnoreDefense = spikeDamageIgnoreDefense;
-        this.spikeDamageElement = spikeDamageElement;
-        this.spikeDamageType = spikeDamageType;
-
-    }
-
     /// <inheritdoc/>
     public static bool operator ==(SpikePenaltyConfig a, SpikePenaltyConfig b)
     {
@@ -127,7 +117,7 @@ public struct SpikePenaltyConfig : IEquatable<SpikePenaltyConfig>
     }
 
     /// <inheritdoc/>
-    public bool Equals(SpikePenaltyConfig other)
+    public readonly bool Equals(SpikePenaltyConfig other)
     {
         return spikePenaltyType == other.spikePenaltyType &&
                spikeDamageAmount == other.spikeDamageAmount &&

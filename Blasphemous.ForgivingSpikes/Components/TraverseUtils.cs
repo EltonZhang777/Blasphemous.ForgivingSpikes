@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Blasphemous.ForgivingSpikes.Components;
+
 internal class TraverseUtils
 {
     public enum TraverseAccessType
@@ -171,4 +172,3 @@ internal class TraverseUtils
         SetValue(ref obj, variableName, value, accessType);
     }
 }
-

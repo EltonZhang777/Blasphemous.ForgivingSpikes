@@ -189,7 +189,7 @@ public static class SpikeUtilities
         Tpo.Teleport(tpoCurrentPosition);  // stop Penitent from moving
 
         // if safe position is in spikes, revert safe position to a moment ago until it is away from spikes
-        List<Vector3> safePositions = PatchController.safePositionQueue.ToList();
+        List<Vector3> safePositions = [.. PatchController.safePositionQueue];
         for (int i = PatchController.safePositionQueue.Count - 1; i >= 0; i--)
         {
             Main.LogIfDebug($"Safe Position too close in spikes! Reverting safe position to a moment ago");
@@ -234,4 +234,3 @@ public static class SpikeUtilities
         yield break;
     }
 }
-
