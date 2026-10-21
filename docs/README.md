@@ -24,13 +24,15 @@ A Blasphemous 1 mod that makes spike, fall, and other trap penalty more forgivin
 - `spikePenaltyType`: "Instakill", "FixedDamage" or "PercentageDamage"
 - `spikeDamageAmount`:
   -  if `spikePenaltyType` is "FixedDamage", then its amount is fixed damage amount
-  -  if `spikePenaltyType` is "PercentageDamage", then its amount is the ratio to Penitent's max health (range: [0.0, 1.0])
+  -  if `spikePenaltyType` is "PercentageDamage", then its amount is multiplied by Penitent's max health
 - `spikeDamageIgnoreDefense`: Whether to ignore defense or not 
   - (value: `true` / `false`)
 - `spikeDamageElement`: Damage element of the spike
   - (value: `Normal` / `Fire` / `Toxic` / `Lightning` / `Magic`, `Contact`)
 - `spikeDamageType`: Damage type of the spike
   - (value: `Normal` / `Heavy` / `Critical` / `Simple` / `Stunt` / `OptionalStunt`)
+
+When JSON omits fields from `globalSpikePenaltyConfig`, defaults are `Instakill`, `0`, `true`, `Normal`, and `Heavy`, respectively. If the entire `globalSpikePenaltyConfig` field is omitted, the config defaults to vanilla instakill behavior.
 
 
 ## Installation
