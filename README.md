@@ -6,8 +6,8 @@ A Blasphemous 1 mod that makes spike, fall, and other trap penalty more forgivin
 
 ## Features
 
-[<img src="showcase_1.gif"/>]() 
-[<img src="showcase_2.gif"/>]()
+[<img src="docs/showcase_1.gif"/>]()
+[<img src="docs/showcase_2.gif"/>]()
 
 - Make Penitent respawn after falling into spikes trap or abyss trap, instead of being instakilled. 
 - Configurable functionalities, including
@@ -18,6 +18,21 @@ A Blasphemous 1 mod that makes spike, fall, and other trap penalty more forgivin
 - Supports configurating both through `.cfg` file and public API access through `SpikeUtilities` static class
 
 ## Usage
+
+The spike configuration commands are available in both Release and Debug builds:
+
+- `spike current`: show all five fields and values from this mod's global spike configuration.
+- `spike set <field> <value>`: update and save one field per invocation. Successful changes persist across launches; invalid fields and values are rejected with the accepted inputs.
+
+Supported fields and values:
+
+- `spikePenaltyType`: `Instakill`, `FixedDamage`, or `PercentageDamage`.
+- `spikeDamageAmount`: a `Single` value using `.` as the decimal separator, such as `1.5`, `-1`, or `1e-3`; `NaN`, `Infinity`, and `-Infinity` are also accepted.
+- `spikeDamageIgnoreDefense`: `true` or `false`.
+- `spikeDamageElement`: `Normal`, `Fire`, `Toxic`, `Lightning`, `Magic`, or `Contact`.
+- `spikeDamageType`: `Normal`, `Heavy`, `Critical`, `Simple`, `Stunt`, or `OptionalStunt`.
+
+When `spikePenaltyType` is `PercentageDamage`, `spikeDamageAmount` is a multiplier of Penitent's maximum health: `0.5` means 50%. The `spike respawn` command remains available only in Debug builds.
 
 `SpikePenaltyConfig` has the following configurable fields that you can change in `.cfg` file:
 
